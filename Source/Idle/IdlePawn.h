@@ -55,12 +55,13 @@ public:
 	bool UpgradeModule(int row, int column);
 
 	UFUNCTION(BlueprintCallable, Category = "IdlePawn")
-	UTexture2D* GetModuleLevelTexture(int row, int column) const;
+	UTexture2D* GetModuleLevelTexture(int level, int row, int column) const;
 
 	UFUNCTION(BlueprintCallable, Category = "IdlePawn")
 	void AddResources(int count) { ResourcesCount += count; }
 
 	UFUNCTION(BlueprintCallable, Category = "IdlePawn")
 	bool IsModuleSlotAvailable(int row, int column) const { return (modulesGrid[row][column] == nullptr); }
+
 
 };

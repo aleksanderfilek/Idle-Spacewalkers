@@ -22,7 +22,8 @@ void UModuleBase::Upgrade()
 
 float UModuleBase::GetUpgradeCost() const
 { 
-	if ((Level - 1) >= Info->Levels.Num()) return -1.0f;
+	UE_LOG(LogTemp, Warning, TEXT("Level comp %d >= %d"), Level, Info->Levels.Num());
+	if (Level >= (Info->Levels.Num() - 1)) return -1.0f;
 
 	return Info->Levels[Level].Cost; 
 }
@@ -53,6 +54,11 @@ void UModuleBase::SetLevelModifier(int modifier)
 {
 	LevelModifier += modifier;
 	RefreshNeighbours();
+}
+
+void UModuleBase::SetResourcesPerTick(float resources)
+{
+	ResourcesPerTick = resources;
 }
 
 void UModuleBase::SetResourcesModifier(float modifier)

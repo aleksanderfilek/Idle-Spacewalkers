@@ -39,14 +39,5 @@ public:
 	TSubclassOf<class UModuleBase> Class;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Module Info")
-	UTexture2D* Normal;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Module Info")
-	UTexture2D* Pressed;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Module Info")
-	UTexture2D* Disabled;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Module Info")
 	TArray<FModuleLevelInfo> Levels;
 };

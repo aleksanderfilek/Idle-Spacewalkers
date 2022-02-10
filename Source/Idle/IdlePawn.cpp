@@ -55,15 +55,11 @@ void AIdlePawn::Tick(float DeltaTime)
 			if(modulesGrid[i][j] == nullptr) continue;
 
 			NewResource += modulesGrid[i][j]->Tick(DeltaTime);
-			UE_LOG(LogTemp, Warning, TEXT("%d"), NewResource);
 		}
 	}
 
 	ResourcesCount += NewResource;
 	ResourcesSpeed = NewResource / DeltaTime;
-	UE_LOG(LogTemp, Warning, TEXT("res %f"), NewResource);
-	UE_LOG(LogTemp, Warning, TEXT("speed %f, detla time %f"), ResourcesSpeed, DeltaTime);
-
 }
 
 // Called to bind functionality to input
@@ -103,15 +99,19 @@ bool AIdlePawn::SetModuleSlot(int id, int row, int column)
 
 	moduleSlot->SetNeighbours(Neighbours);
 	moduleSlot->SetTickLength(UIdleFunctionLibrary::GetIdleGameInstance()->GetTickLength());
-	
+	moduleSlot->Upgrade();
+
 	return true;
 }
 
 bool AIdlePawn::IncrementUpgradeLevel()
 { 
-	int Threshold = UIdleFunctionLibrary::GetIdleGameInstance()->GetThresholds(UpgradeLevel);
+	UIdleGameInstance* gameInstance = UIdleFunctionLibrary::GetIdleGameInstance();
+
+	int Threshold = gameInstance->GetThresholds(UpgradeLevel);
 	if (ResourcesCount < Threshold) return false;
-	ResourcesCount -= Threshold;
+
+	ResourcesCount = gameInstance->GetStartResources();
 
 	UpgradeLevel++; 
 
@@ -140,15 +140,17 @@ bool AIdlePawn::UpgradeModule(int row, int column)
 	ResourcesCount -= Cost;
 
 	moduleSlot->Upgrade();
+	moduleSlot->RefreshNeighbours();
 
 	return true;
 }
 
-UTexture2D* AIdlePawn::GetModuleLevelTexture(int row, int column) const
+UTexture2D* AIdlePawn::GetModuleLevelTexture(int level, int row, int column) const
 {
 	UModuleBase* moduleSlot = modulesGrid[row][column];
+	UE_LOG(LogTemp, Warning, TEXT("[IDLE PAWN] Level comp %d >= %d"), moduleSlot->Level, moduleSlot->Info->Levels.Num());
 
-	return moduleSlot->GetCurrentTexture();
+	return moduleSlot->GetTexture(level);
 }
 
 bool AIdlePawn::IsLevelUpgradeAvailable() const
