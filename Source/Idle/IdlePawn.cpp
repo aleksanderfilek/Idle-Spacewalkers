@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Idle game created for application purpouse by Aleksander Filek
 
 
 #include "IdlePawn.h"
@@ -68,11 +68,12 @@ void AIdlePawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 }
 
-bool AIdlePawn::SetModuleSlot(int id, int row, int column)
+bool AIdlePawn::CreateModule(int id, int row, int column)
 {
+	UIdleGameInstance* gameInstance = UIdleFunctionLibrary::GetIdleGameInstance();
 	UModuleBase*& moduleSlot = modulesGrid[row][column];
 
-	UModuleInfoDataAsset* moduleInfo = UIdleFunctionLibrary::GetIdleGameInstance()->GetModuleInfo(id);
+	UModuleInfoDataAsset* moduleInfo = gameInstance->GetModuleInfo(id);
 
 	int Cost = moduleInfo->Levels[0].Cost;
 	if (ResourcesCount < Cost)
@@ -83,7 +84,7 @@ bool AIdlePawn::SetModuleSlot(int id, int row, int column)
 
 	ResourcesCount -= Cost;
 
-	moduleSlot = NewObject<UModuleBase>(moduleInfo->Class);
+	moduleSlot = NewObject<UModuleBase>(gameInstance, moduleInfo->Class);
 	if (moduleSlot == nullptr)
 	{
 		UE_LOG(LogTemp, Error, TEXT("Could not create module!"));
@@ -98,22 +99,22 @@ bool AIdlePawn::SetModuleSlot(int id, int row, int column)
 	if (column + 1 < gridSize.X) Neighbours.Add(&modulesGrid[row][column + 1]);
 
 	moduleSlot->SetNeighbours(Neighbours);
-	moduleSlot->SetTickLength(UIdleFunctionLibrary::GetIdleGameInstance()->GetTickLength());
+	moduleSlot->TickLength = gameInstance->GetTickLength();
 	moduleSlot->Upgrade();
 
 	return true;
 }
 
-bool AIdlePawn::IncrementUpgradeLevel()
+bool AIdlePawn::Upgrade()
 { 
 	UIdleGameInstance* gameInstance = UIdleFunctionLibrary::GetIdleGameInstance();
 
-	int Threshold = gameInstance->GetThresholds(UpgradeLevel);
+	int Threshold = gameInstance->GetThresholds(Level);
 	if (ResourcesCount < Threshold) return false;
 
 	ResourcesCount = gameInstance->GetStartResources();
 
-	UpgradeLevel++; 
+	Level++; 
 
 	for (int i = 0; i < gridSize.Y; i++)
 	{
@@ -121,7 +122,7 @@ bool AIdlePawn::IncrementUpgradeLevel()
 		{
 			if (modulesGrid[i][j] == nullptr) continue;
 
-			modulesGrid[i][j]->RemoveFromRoot();
+			modulesGrid[i][j]->ConditionalBeginDestroy();
 			modulesGrid[i][j] = nullptr;
 		}
 	}
@@ -140,7 +141,6 @@ bool AIdlePawn::UpgradeModule(int row, int column)
 	ResourcesCount -= Cost;
 
 	moduleSlot->Upgrade();
-	moduleSlot->RefreshNeighbours();
 
 	return true;
 }
@@ -148,12 +148,11 @@ bool AIdlePawn::UpgradeModule(int row, int column)
 UTexture2D* AIdlePawn::GetModuleLevelTexture(int level, int row, int column) const
 {
 	UModuleBase* moduleSlot = modulesGrid[row][column];
-	UE_LOG(LogTemp, Warning, TEXT("[IDLE PAWN] Level comp %d >= %d"), moduleSlot->Level, moduleSlot->Info->Levels.Num());
 
 	return moduleSlot->GetTexture(level);
 }
 
-bool AIdlePawn::IsLevelUpgradeAvailable() const
+bool AIdlePawn::IsUpgradeAvailable() const
 {
-	return (ResourcesCount >= UIdleFunctionLibrary::GetIdleGameInstance()->GetThresholds(UpgradeLevel));
+	return (ResourcesCount >= UIdleFunctionLibrary::GetIdleGameInstance()->GetThresholds(Level));
 }

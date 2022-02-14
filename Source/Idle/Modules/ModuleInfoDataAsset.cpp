@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Idle game created for application purpouse by Aleksander Filek
 
 
 #include "ModuleInfoDataAsset.h"

@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Idle game created for application purpouse by Aleksander Filek
 
 
 #include "IdleGameInstance.h"
@@ -25,7 +25,7 @@ void UIdleGameInstance::Init()
 	}
 }
 
-UUserWidget* UIdleGameInstance::CreateMainWidget()
+void UIdleGameInstance::CreateMainWidget()
 {
 	MainWidget = CreateWidget<UUserWidget>(this, MainWidgetClass);
 	MainWidget->AddToViewport();
@@ -38,8 +38,6 @@ UUserWidget* UIdleGameInstance::CreateMainWidget()
 	PlayerController->SetInputMode(InputModeData);
 
 	PlayerController->bShowMouseCursor = true;
-	
-	return MainWidget;
 }
 
 FIntPoint UIdleGameInstance::GetGridSize() const

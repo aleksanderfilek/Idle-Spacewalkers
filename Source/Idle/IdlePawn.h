@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Idle game created for application purpouse by Aleksander Filek
 
 #pragma once
 
@@ -28,28 +28,37 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 private:
-	class UModuleBase*** modulesGrid;
+	float ResourcesCount = 0.0f;
+	float ResourcesSpeed = 0.0f;
+	int Level = 0;
 	FIntPoint gridSize;
 	float DefaultGeneratedResources;
 
 public:
-	UPROPERTY(BlueprintReadOnly)
-	float ResourcesCount = 0.0f;
-
-	UPROPERTY(BlueprintReadOnly)
-	float ResourcesSpeed = 0.0f;
-
-	UPROPERTY(BlueprintReadOnly)
-	int UpgradeLevel = 0;
+	UFUNCTION(BlueprintCallable, Category = "IdlePawn")
+	FORCEINLINE float GetResourcesCount() const { 
+		return ResourcesCount; }
 
 	UFUNCTION(BlueprintCallable, Category = "IdlePawn")
-	bool SetModuleSlot(int id, int row, int column);
+	FORCEINLINE float GetResourcesSpeed() const { 
+		return ResourcesSpeed; }
 
 	UFUNCTION(BlueprintCallable, Category = "IdlePawn")
-	bool IncrementUpgradeLevel();
+	FORCEINLINE int GetLevel() const { 
+		return Level; }
 
 	UFUNCTION(BlueprintCallable, Category = "IdlePawn")
-	bool IsLevelUpgradeAvailable() const;
+	bool Upgrade();
+
+	UFUNCTION(BlueprintCallable, Category = "IdlePawn")
+	bool IsUpgradeAvailable() const;
+
+private:
+	class UModuleBase*** modulesGrid;
+
+public:
+	UFUNCTION(BlueprintCallable, Category = "IdlePawn")
+	bool CreateModule(int id, int row, int column);
 
 	UFUNCTION(BlueprintCallable, Category = "IdlePawn")
 	bool UpgradeModule(int row, int column);
@@ -58,10 +67,6 @@ public:
 	UTexture2D* GetModuleLevelTexture(int level, int row, int column) const;
 
 	UFUNCTION(BlueprintCallable, Category = "IdlePawn")
-	void AddResources(int count) { ResourcesCount += count; }
-
-	UFUNCTION(BlueprintCallable, Category = "IdlePawn")
-	bool IsModuleSlotAvailable(int row, int column) const { return (modulesGrid[row][column] == nullptr); }
-
-
+	bool IsModuleSlotAvailable(int row, int column) const { 
+		return (modulesGrid[row][column] == nullptr); }
 };

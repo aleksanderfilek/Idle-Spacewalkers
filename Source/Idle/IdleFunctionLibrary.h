@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Idle game created for application purpouse by Aleksander Filek
 
 #pragma once
 
@@ -19,6 +19,17 @@ class IDLE_API UIdleFunctionLibrary : public UBlueprintFunctionLibrary
 
 public:
 	UFUNCTION(BlueprintCallable, Category="Idle Library")
-	static UIdleGameInstance* GetIdleGameInstance();
+	static FORCEINLINE UIdleGameInstance* GetIdleGameInstance() {
+		return UIdleGameInstance::Get();
+	}
 	
+	UFUNCTION(BlueprintCallable, Category = "Idle Library")
+	static FORCEINLINE AIdlePawn* GetIdlePawn() {
+		return UIdleGameInstance::Get()->GetPawn();
+	}
+
+	UFUNCTION(BlueprintCallable, Category = "Idle Library")
+	static FORCEINLINE UUserWidget* GetMainBP() {
+		return UIdleGameInstance::Get()->GetMainWidget();
+	}
 };

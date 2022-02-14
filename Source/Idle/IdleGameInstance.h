@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Idle game created for application purpouse by Aleksander Filek
 
 #pragma once
 
@@ -32,39 +32,59 @@ private:
 
 	AIdlePawn* Pawn;
 
+public:
+	FORCEINLINE UUserWidget* GetMainWidget() const { 
+		return MainWidget; }
+
+	void CreateMainWidget();
+
+	FORCEINLINE AIdlePawn* GetPawn() const { 
+		return Pawn; }
+	FORCEINLINE void SetPawn(AIdlePawn* NewPawn) { 
+		Pawn = NewPawn; }
+
 protected:
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category="Idle Instance")
 	TSubclassOf<UUserWidget> MainWidgetClass;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "Idle Instance")
 	UGameDataAsset* GameAsset;
 
-	UPROPERTY(EditAnywhere)
+public:
+	FORCEINLINE float GetStartResources() const { 
+		return GameAsset->StartResources; }
+
+	FORCEINLINE float GetThresholds(int currentLevel) const { 
+		return GameAsset->Thresholds[currentLevel]; }
+
+	FORCEINLINE float GetDefaultGeneratedResources() const { 
+		return GameAsset->DefaultGeneratedResources; }
+
+	FORCEINLINE float GetTickLength() const { 
+		return GameAsset->TickLength; }
+
+	UFUNCTION(BlueprintCallable, Category = "Idle Instance")
+	FIntPoint GetGridSize() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Idle Instance")
+	FORCEINLINE UModuleInfoDataAsset* GetModuleInfo(int id) const { 
+		return GameAsset->Modules[id]; }
+
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE UTexture2D* GetDefaultModuleTexture(int id) const { 
+		return GameAsset->Modules[id]->Levels[0].Texture; }
+
+	UFUNCTION(BlueprintCallable, Category = "Idle Instance")
+		FORCEINLINE int GetModuleCount() const { 
+		return GameAsset->Modules.Num(); }
+
+protected:
+	UPROPERTY(EditAnywhere, Category = "Idle Instance")
 	UTexture2D* DefaultGridTexture;
 
 public:
-	FORCEINLINE UUserWidget* GetMainWidget() const { return MainWidget; }
-
-	UFUNCTION(BlueprintCallable)
-	FORCEINLINE AIdlePawn* GetPawn() const { return Pawn; }
-
-	UUserWidget* CreateMainWidget();
-	FORCEINLINE void SetPawn(AIdlePawn* NewPawn) { Pawn = NewPawn; }
-
-	UFUNCTION(BlueprintCallable)
-	FIntPoint GetGridSize() const;
-	FORCEINLINE float GetStartResources() const { return GameAsset->StartResources; }
-	FORCEINLINE float GetThresholds(int currentLevel) const { return GameAsset->Thresholds[currentLevel]; }
-	FORCEINLINE float GetDefaultGeneratedResources() const { return GameAsset->DefaultGeneratedResources; }
-	FORCEINLINE float GetTickLength() const { return GameAsset->TickLength; }
-
-	UFUNCTION(BlueprintCallable)
-	FORCEINLINE UModuleInfoDataAsset* GetModuleInfo(int id) const { return GameAsset->Modules[id]; }
-
-	UFUNCTION(BlueprintCallable)
-	FORCEINLINE int GetModuleNumber() const { return GameAsset->Modules.Num(); }
-
-	UFUNCTION(BlueprintCallable)
-	FORCEINLINE UTexture2D* GetDefaultGridTexture() const { return DefaultGridTexture; }
+	UFUNCTION(BlueprintCallable, Category = "Idle Instance")
+	FORCEINLINE UTexture2D* GetDefaultGridTexture() const { 
+		return DefaultGridTexture; }
 
 };

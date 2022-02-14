@@ -1,4 +1,4 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+// Idle game created for application purpouse by Aleksander Filek
 
 
 #include "IdleGameModeBase.h"

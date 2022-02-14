@@ -1,5 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
+// Idle game created for application purpouse by Aleksander Filek
 
 #include "ModuleBase.h"
 
@@ -18,21 +17,23 @@ void UModuleBase::Upgrade()
 	Level++;
 
 	OnUpgrade();
+	RefreshNeighbours();
 }
 
 float UModuleBase::GetUpgradeCost() const
 { 
-	UE_LOG(LogTemp, Warning, TEXT("Level comp %d >= %d"), Level, Info->Levels.Num());
 	if (Level >= (Info->Levels.Num() - 1)) return -1.0f;
 
 	return Info->Levels[Level].Cost; 
 }
 
-TArray<UModuleBase*> UModuleBase::GetModuleSlotNeighbours(int& length) const
+TArray<UModuleBase*> UModuleBase::GetNeighbours(int& length) const
 {
 	TArray<UModuleBase*> result;
 	for (int i = 0; i < Neighbours.Num(); i++)
 	{
+		if (*(Neighbours[i]) == nullptr) continue;
+
 		result.Add(*Neighbours[i]);
 	}
 
@@ -44,29 +45,16 @@ void UModuleBase::RefreshNeighbours()
 {
 	for (int i = 0; i < Neighbours.Num(); i++)
 	{
-		if (Neighbours[i] == nullptr) continue;
+		if (*(Neighbours[i]) == nullptr) continue;
 
-		(*Neighbours[i])->OnUpgrade();
+		(*(Neighbours[i]))->OnUpgrade();
+		UE_LOG(LogTemp, Warning, TEXT("%s"), *(*(Neighbours[i]))->GetName().ToString());
 	}
 }
 
-void UModuleBase::SetLevelModifier(int modifier)
-{
-	LevelModifier += modifier;
-	RefreshNeighbours();
-}
-
-void UModuleBase::SetResourcesPerTick(float resources)
-{
-	ResourcesPerTick = resources;
-}
-
-void UModuleBase::SetResourcesModifier(float modifier)
-{
-	ResourcesModifier *= modifier;
-}
-
-void UModuleBase::SetTickModifier(float modifier)
-{
-	TickModifier *= modifier;
+UTexture2D* UModuleBase::GetTexture(int level) const
+{ 
+	if (level >= Info->Levels.Num())
+		return nullptr;
+	return  Info->Levels[(level < 0) ? Level : level].Texture; 
 }
